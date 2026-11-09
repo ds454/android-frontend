@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/landing"
     tools:context=".LandingActivity"
-    android:background="@drawable/landing_background"
-    >
+    android:background="@drawable/landing_background">
 
 
 

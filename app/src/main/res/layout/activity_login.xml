@@ -5,6 +5,73 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/login"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:background="@drawable/login_background">
+
+    <!-- Login Buttons -->
+
+    <Button
+        android:id="@+id/EnterButton"
+        android:layout_width="135dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:backgroundTint="#A2ADCE"
+        android:text="Enter"
+        android:textColor="#14142B"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.681" />
+
+    <Button
+        android:id="@+id/SignupButton"
+        android:layout_width="114dp"
+        android:layout_height="43dp"
+        android:layout_gravity="center"
+        android:backgroundTint="#A2ADCE"
+        android:text="Sign Up"
+        android:textColor="#14142B"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
+
+    <!-- Login Text Entries -->
+
+    <EditText
+        android:id="@+id/UsernameTextEntry"
+        android:layout_width="362dp"
+        android:layout_height="50dp"
+        android:background="#A2ADCE"
+        android:gravity="center"
+        android:textColor="#14142B"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.411" />
+
+    <EditText
+        android:id="@+id/PasswordTextEntry"
+        android:layout_width="362dp"
+        android:layout_height="50dp"
+        android:background="#A2ADCE"
+        android:gravity="center"
+        android:textColor="#14142B"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.546" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

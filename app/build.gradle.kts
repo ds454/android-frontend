@@ -1,5 +1,7 @@
+
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.protobuf") version "0.10.1"
 }
 
 android {
@@ -31,6 +33,31 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    sourceSets {
+        getByName("main") {
+            val proto = (this as ExtensionAware).extensions.getByName("proto") as SourceDirectorySet
+            proto.srcDir("../local-dev/proto")
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.5"
+    }
+    plugins {
+        create("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.68.1"
+        }
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") { option("lite") }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -41,4 +68,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.google.protobuf:protobuf-javalite:3.25.5")
+    implementation("io.grpc:grpc-okhttp:1.85.0")
+    implementation("io.grpc:grpc-protobuf-lite:1.85.0")
+    implementation("io.grpc:grpc-stub:1.85.0")
 }

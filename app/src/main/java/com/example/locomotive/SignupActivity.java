@@ -9,9 +9,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 /*
-    Login Activity:
+    Sign Up Activity:
+
+    Screen Click Through:
     - Traveled to via Landing or Login page
     - Can go to Login or (by signing up) to Home Page
+
+    Functionality:
+    - Takes in sign up information (username, password, and steam) from user
+    - Sends sign up info to create/establish new user
  */
 
 public class SignupActivity extends AppCompatActivity {
