@@ -39,7 +39,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     //Image buttons (profile & hamburger menu stuff)
     private ImageButton profileButton;
     private ImageButton hamburgerButton;
-    private DrawerLayout drawer;
+    private DrawerLayout drawerLayout;
     private NavigationView dropDownMenu;
 
 
@@ -49,8 +49,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
+        //Initialize Buttons (and hamburger drawer/drop downs)
+        profileButton = findViewById(R.id.profileButton);
+        hamburgerButton = findViewById(R.id.hamburgerButton);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        dropDownMenu = findViewById(R.id.dropDown);
 
+        //On Click Listeners
+        profileButton.setOnClickListener(this);
+        hamburgerButton.setOnClickListener(this);
+        drawerLayout.setOnClickListener(this);
+        dropDownMenu.setOnClickListener(this);
 
+        //Drop down menu specific item listener
+        dropDownMenu.setNavigationItemSelectedListener(item -> {
+
+            //grab id of item selected
+            int picked = item.getItemId();
+
+            if (picked == R.id.dropDownHome){
+                startActivity(new Intent(HomeActivity.this, HomeActivity.class));
+            }
+            else if (picked == R.id.dropDownComps){
+                startActivity(new Intent(HomeActivity.this, CompsActivity.class));
+            }
+            else if (picked == R.id.dropDownFriends){
+                startActivity(new Intent(HomeActivity.this, FriendsActivity.class));
+            } else if (picked == R.id.dropDownProfile){
+                startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+            }
+
+            //close drawer
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
 
     }
 
@@ -59,10 +91,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //grab id of clicked button
         int id = v.getId();
 
-        /*If sign up, go to sign up page
-        if (id == R.id.LoginButton){
-            startActivity(new Intent(HomeActivity.this , LoginActivity.class));
-        }*/
-    }
+        //If sign up, go to sign up page
+        if (id == R.id.profileButton){
+            startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+        }
+        else if (id == R.id.hamburgerButton) {
 
+            //open drawer
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        }
+    }
 }
