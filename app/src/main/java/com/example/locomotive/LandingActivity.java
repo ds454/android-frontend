@@ -22,6 +22,7 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     private Button SignupButton;
 
 
+
     //On start
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,20 +33,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
         //Initialize Buttons
         LoginButton = findViewById(R.id.LoginButton);
         SignupButton = findViewById(R.id.SignupButton);
-
-
-
-        // TODO: IMPORTATANT
-        ManagedChannel c = OkHttpChannelBuilder.forAddress("127.0.0.1", 8000).build();
-
-        //send this
-        var loginRequest = ds454.locomotive.generated.grpc.LoginRequest.newBuilder().setUsername("user").setPassword("passwd").setDeviceType("android").build();
-
-        //recieved response
-        var loginResponse = ds454.locomotive.generated.grpc.LoginResponse.newBuilder().build();
-
-        var sessionToken = loginResponse.getSessionToken();
-
 
 
         //Set Up Listener
@@ -62,17 +49,17 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
 
     //On Click Listener (watch button clicks, take actions accordingly)
     @Override
-    public void onClick(View v){
+    public void onClick(View v) {
         //grab id of clicked button
         int id = v.getId();
 
         //If login, go to login page
         if (id == R.id.LoginButton) {
-            startActivity(new Intent(LandingActivity.this , LoginActivity.class));
+            startActivity(new Intent(LandingActivity.this, LoginActivity.class));
         }
         //If sign up, go to sign up page
-        else if (id == R.id.SignupButton){
-            startActivity(new Intent(LandingActivity.this , SignupActivity.class));
+        else if (id == R.id.SignupButton) {
+            startActivity(new Intent(LandingActivity.this, SignupActivity.class));
         }
 
 

@@ -1,5 +1,8 @@
 package com.example.locomotive;
 
+import io.grpc.ManagedChannel;
+import io.grpc.okhttp.OkHttpChannelBuilder;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,9 +25,25 @@ import android.widget.Button;
     Functionality:
     - Takes in login info (username and password) from user)
     - Sends info to verify user and get user details
+
+    TODO: IMPORTANT!!! how to interact with grpc stuff
+
+        import io.grpc.ManagedChannel;
+        import io.grpc.okhttp.OkHttpChannelBuilder;
+
+        ManagedChannel c = OkHttpChannelBuilder.forAddress("127.0.0.1", 8000).build();
+
+        //send this
+        var loginRequest = ds454.locomotive.generated.grpc.LoginRequest.newBuilder().setUsername("user").setPassword("passwd").setDeviceType("android").build();
+
+        //recieved response
+        var loginResponse = ds454.locomotive.generated.grpc.LoginResponse.newBuilder().build();
+
+        var sessionToken = loginResponse.getSessionToken();
+
  */
 
-public class LoginActivity extends AppCompatActivity implements View.onClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     //Declare Buttons
     private Button SignupButton;
@@ -38,12 +57,8 @@ public class LoginActivity extends AppCompatActivity implements View.onClickList
         //Initialize Buttons
         SignupButton = findViewById(R.id.SignupButton);
 
-
-        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });*/
+        //Set up listener
+        SignupButton.setOnClickListener(this);
     }
 
 
@@ -53,12 +68,9 @@ public class LoginActivity extends AppCompatActivity implements View.onClickList
         //grab id of clicked button
         int id = v.getId();
 
-
         //If sign up, go to sign up page
         if (id == R.id.SignupButton){
             startActivity(new Intent(LoginActivity.this , SignupActivity.class));
         }
-
-
     }
 }
