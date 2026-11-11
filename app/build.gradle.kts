@@ -48,13 +48,16 @@ protobuf {
     }
     plugins {
         create("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.68.1"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.85.0"
         }
     }
     generateProtoTasks {
         all().forEach { task ->
             task.builtins {
                 create("java") { option("lite") }
+            }
+            task.plugins {
+                create("grpc") { option("lite") }
             }
         }
     }

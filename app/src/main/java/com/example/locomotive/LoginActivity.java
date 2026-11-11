@@ -1,7 +1,7 @@
 package com.example.locomotive;
 
+import ds454.locomotive.generated.grpc.problem.Problem;
 import io.grpc.ManagedChannel;
-import io.grpc.okhttp.OkHttpChannelBuilder;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,11 +9,16 @@ import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import android.widget.Button;
+import android.widget.EditText;
+
+import com.example.locomotive.grpc.ManagedChannelGetter;
+import com.example.locomotive.util.Result;
+
+import ds454.locomotive.generated.grpc.LoginRequest;
+import ds454.locomotive.generated.grpc.AuthGrpc;
+import ds454.locomotive.generated.grpc.problem.Problem;
 
 /*
     Login Activity:
@@ -45,20 +50,37 @@ import android.widget.Button;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    //Declare Buttons
+    // Declare Buttons
     private Button SignupButton;
+
+    private ManagedChannel c;
+    private AuthGrpc.AuthBlockingStub auth;
+    private EditText UsernameTextEntry;
+    private EditText PasswordTextEntry;
+    private View LoginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Get the managed channel
+        c = ManagedChannelGetter.get();
+        auth = AuthGrpc.newBlockingStub(c);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
         //Initialize Buttons
         SignupButton = findViewById(R.id.SignupButton);
 
+        UsernameTextEntry = findViewById(R.id.UsernameTextEntry);
+        PasswordTextEntry = findViewById(R.id.PasswordTextEntry);
+
+        LoginButton = findViewById(R.id.EnterButton);
+
         //Set up listener
         SignupButton.setOnClickListener(this);
+        LoginButton.setOnClickListener(this);
     }
 
 
@@ -72,5 +94,32 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (id == R.id.SignupButton){
             startActivity(new Intent(LoginActivity.this , SignupActivity.class));
         }
+
+        if (id == R.id.LoginButton) {
+            Result<String, Problem> result = login(
+                    UsernameTextEntry.getText().toString(),
+                    PasswordTextEntry.getText().toString());
+        }
     }
+
+    // Use a helper function rather than calling it directly in onClick so it's easier to move if needed later on
+    private Result<String, Problem> login(String username, String password) {
+
+        // We need to build the request first.
+        LoginRequest request = LoginRequest.newBuilder()
+                // Set the username to send in the request
+                .setUsername(username)
+
+                // Set the password to send in the request
+                .setPassword(password)
+                .build();
+
+        ds454.locomotive.generated.grpc.LoginResponse response = auth.login(request);
+
+        if (response.hasSessionToken()) {
+            return Result.success(response.getSessionToken());
+        }
+        return Result.failure(response.getProblem());
+    }
+
 }
