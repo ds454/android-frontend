@@ -29,10 +29,11 @@ public class SessionTokenInterceptor implements ClientInterceptor {
                 next.newCall(method, callOptions)) {
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
-                // Get the token
+                // Load the token we should have saved earlier from the app's context
                 String token = sessionTokenSupplier.get();
 
-                // Only add the session token to the request it if the token exists
+                // Only add the session token to the request it if the token exists.
+                // Should only be for logging in and signing up.
                 if (token != null && !token.isEmpty()) {
                     headers.put(sessionTokenHeader, token);
                 }

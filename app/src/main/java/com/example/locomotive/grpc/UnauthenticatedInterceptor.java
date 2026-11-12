@@ -37,7 +37,7 @@ public class UnauthenticatedInterceptor implements ClientInterceptor {
                             @Override
                             public void onClose(Status status, Metadata trailers) {
                                 if (status.getCode() == Status.Code.UNAUTHENTICATED) {
-                                    // Check if another thread is redirecting
+                                    // Check if another thread is already redirecting
                                     if (!redirecting.compareAndSet(false, true)) return;
 
                                     // Clear the saved session token

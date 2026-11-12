@@ -96,10 +96,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         if (id == R.id.EnterButton) {
+            // Call our login helper function
             var result = login(
                     UsernameTextEntry.getText().toString(),
                     PasswordTextEntry.getText().toString());
 
+            // If the call failed:
             if (result.isFailure()) {
 
                 // Clear the password field
@@ -115,11 +117,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         UsernameTextEntry.setError("Server Error. Try again later.");
                 }
             }
+            // If the call succeeded:
             else if (result.isSuccess()) {
+                // Save the session token to the app's context.
+                // It's important to mention that you shouldn't need to
+                // load the session token ever, since it automatically gets
+                // added to each outgoing request.
                 var sessionToken = result.getSuccess();
                 SessionTokenManager.saveSessionToken(sessionToken);
 
-                // Go directly to the homepage
+                // Go to the homepage and clear the screen stack
                 var toHomePage = new Intent(LoginActivity.this, HomeActivity.class);
                 toHomePage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(toHomePage);
@@ -139,11 +146,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .setPassword(password)
                 .build();
 
+        // And it's as easy as this. No building HTTP requests, no HTTP helper methods, no
+        // loading username and password from storage for each request. It just works!
         ds454.locomotive.generated.grpc.LoginResponse response = auth.login(request);
 
+        // If it has the session token, we return success
         if (response.hasSessionToken()) {
             return Result.success(response.getSessionToken());
         }
+
+        // Otherwise, we return failure
         return Result.failure(response.getProblem());
     }
 

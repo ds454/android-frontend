@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import java.util.Optional;
 
+// Manages the logged-in user's session token. Shouldn't need to be used outside
+// LoginActivity and ManagedChannelGetter.
 public class SessionTokenManager {
     private static final String sessionPreferences = "sessionPreferences";
     private static final String sessionTokenKey = "tkn";
