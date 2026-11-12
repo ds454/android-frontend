@@ -6,8 +6,8 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: gradle
-            image: gradle:jdk17
+          - name: build
+            image: ghcr.io/cirruslabs/android-sdk:36
             command: ["sleep"]
             args: ["infinity"]
       '''
@@ -17,7 +17,7 @@ pipeline {
     skipDefaultCheckout(true)
   }
   stages {
-        stage('Checkout') {
+    stage('Checkout') {
       steps {
         checkout([
           $class: 'GitSCM',
@@ -37,7 +37,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        container('gradle') {
+        container('build') {
           script {
             sh """
               chmod +x gradlew
