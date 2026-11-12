@@ -1,6 +1,7 @@
 package com.example.locomotive;
 
 import ds454.locomotive.generated.grpc.problem.Problem;
+import ds454.locomotive.generated.grpc.problem.ProblemType;
 import io.grpc.ManagedChannel;
 
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.locomotive.grpc.ManagedChannelGetter;
+import com.example.locomotive.grpc.SessionTokenManager;
 import com.example.locomotive.util.Result;
 
 import ds454.locomotive.generated.grpc.LoginRequest;
@@ -48,7 +50,7 @@ import ds454.locomotive.generated.grpc.problem.Problem;
 
  */
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Declare Buttons
     private Button SignupButton;
@@ -95,10 +97,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivity(new Intent(LoginActivity.this , SignupActivity.class));
         }
 
-        if (id == R.id.LoginButton) {
-            Result<String, Problem> result = login(
+        if (id == R.id.EnterButton) {
+            var result = login(
                     UsernameTextEntry.getText().toString(),
                     PasswordTextEntry.getText().toString());
+
+            if (result.isFailure()) {
+                var failure = result.getFailure();
+
+                // Clear the password field
+                PasswordTextEntry.getText().clear();
+
+                // Tell the user what the problem was
+                switch (result.getFailure().getProblem()) {
+                    case InvalidUsernamePassword:
+                        UsernameTextEntry.setError("Incorrect username or password");
+
+                    case ServerError:
+                    default:
+                        UsernameTextEntry.setError("Server Error. Try again later.");
+                }
+            }
+            else if (result.isSuccess()) {
+                var sessionToken = result.getSuccess();
+                SessionTokenManager.saveSessionToken(sessionToken);
+
+                // Go directly to the homepage
+                var toHomePage = new Intent(LoginActivity.this, HomeActivity.class);
+                toHomePage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(toHomePage);
+            }
         }
     }
 

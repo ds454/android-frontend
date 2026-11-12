@@ -56,12 +56,14 @@ public final class Result<S, F> {
     }
 
     /** The success value, or empty if this is a failure (or the value is null). */
-    public Optional<S> getSuccess() {
-        return Optional.ofNullable(success);
+    public S getSuccess() {
+        if (isFailure()) throw new IllegalStateException();
+        return success;
     }
 
     /** The failure value, or empty if this is a success (or the value is null). */
-    public Optional<F> getFailure() {
-        return Optional.ofNullable(failure);
+    public F getFailure() {
+        if (isSuccess()) throw new IllegalStateException();
+        return failure;
     }
 }
