@@ -7,7 +7,7 @@ pipeline {
         spec:
           containers:
           - name: gradle
-            image: gradle:jdk11
+            image: gradle:jdk17
             command: ["sleep"]
             args: ["infinity"]
       '''
