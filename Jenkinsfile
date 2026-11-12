@@ -6,21 +6,41 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: buildkit
-            image: alpine:3.23.5
+          - name: gradle
+            image: gradle:jdk11
             command: ["sleep"]
             args: ["infinity"]
       '''
     }
   }
+  options {
+    skipDefaultCheckout(true)
+  }
   stages {
-    stage('Release') {
+        stage('Checkout') {
       steps {
-        container('buildkit') {
+        checkout([
+          $class: 'GitSCM',
+          branches: scm.branches,
+          userRemoteConfigs: scm.userRemoteConfigs,
+          extensions: [[
+            $class: 'SubmoduleOption',
+            disableSubmodules: false,
+            recursiveSubmodules: true,
+            parentCredentials: true,
+            trackingSubmodules: false,
+            reference: '',
+            timeout: 30
+          ]]
+        ])
+      }
+    }
+    stage('Build') {
+      steps {
+        container('gradle') {
           script {
             sh """
-                  echo Hello, World!
-                  ls -lah
+              ./gradelw assembleDebug
           """
           }
         }
