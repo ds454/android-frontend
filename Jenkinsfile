@@ -40,7 +40,7 @@ pipeline {
         container('gradle') {
           script {
             sh """
-              ./gradelw assembleDebug
+              ./gradlew assembleDebug
           """
           }
         }
