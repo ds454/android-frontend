@@ -1,7 +1,6 @@
 package com.example.locomotive;
 
 import ds454.locomotive.generated.grpc.problem.Problem;
-import ds454.locomotive.generated.grpc.problem.ProblemType;
 import io.grpc.ManagedChannel;
 
 import android.content.Intent;
@@ -20,7 +19,6 @@ import com.example.locomotive.util.Result;
 
 import ds454.locomotive.generated.grpc.LoginRequest;
 import ds454.locomotive.generated.grpc.AuthGrpc;
-import ds454.locomotive.generated.grpc.problem.Problem;
 
 /*
     Login Activity:
@@ -43,7 +41,7 @@ import ds454.locomotive.generated.grpc.problem.Problem;
         //send this
         var loginRequest = ds454.locomotive.generated.grpc.LoginRequest.newBuilder().setUsername("user").setPassword("passwd").setDeviceType("android").build();
 
-        //recieved response
+        //received response
         var loginResponse = ds454.locomotive.generated.grpc.LoginResponse.newBuilder().build();
 
         var sessionToken = loginResponse.getSessionToken();
@@ -103,7 +101,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     PasswordTextEntry.getText().toString());
 
             if (result.isFailure()) {
-                var failure = result.getFailure();
 
                 // Clear the password field
                 PasswordTextEntry.getText().clear();
