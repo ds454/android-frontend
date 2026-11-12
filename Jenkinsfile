@@ -40,6 +40,7 @@ pipeline {
         container('gradle') {
           script {
             sh """
+              chmod +x gradlew
               ./gradlew assembleDebug
           """
           }
