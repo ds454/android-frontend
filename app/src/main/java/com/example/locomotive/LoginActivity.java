@@ -1,6 +1,7 @@
 package com.example.locomotive;
 
 import ds454.locomotive.generated.grpc.problem.Problem;
+import ds454.locomotive.generated.grpc.problem.ProblemType;
 import io.grpc.ManagedChannel;
 
 import android.content.Intent;
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.locomotive.grpc.ManagedChannelGetter;
 import com.example.locomotive.grpc.SessionTokenManager;
@@ -146,9 +148,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .setPassword(password)
                 .build();
 
-        // And it's as easy as this. No building HTTP requests, no HTTP helper methods, no
+        // Here is the request. No building HTTP requests, no HTTP helper methods, no
         // loading username and password from storage for each request. It just works!
-        ds454.locomotive.generated.grpc.LoginResponse response = auth.login(request);
+        ds454.locomotive.generated.grpc.LoginResponse response;
+        try {
+            response = auth.login(request);
+        }
+        catch (Exception e) {
+            Toast.makeText(this.getApplicationContext(), "Unable to connect to Locomotive server", Toast.LENGTH_LONG).show();
+            return Result.failure(ds454.locomotive.generated.grpc.problem.Problem.newBuilder().setProblem(ProblemType.ServerError).setMessage("Unable to connect to Locomotive server").build());
+        }
 
         // If it has the session token, we return success
         if (response.hasSessionToken()) {

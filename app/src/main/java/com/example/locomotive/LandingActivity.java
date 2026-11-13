@@ -15,12 +15,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 import android.widget.Button;
 
+import com.example.locomotive.activities.ServerDetailsActivity;
+
 public class LandingActivity extends AppCompatActivity implements View.OnClickListener {
 
     //Declare buttons
     private Button LoginButton;
     private Button SignupButton;
-
+    private Button EnterServerDetailsButton;
 
 
     //On start
@@ -33,11 +35,12 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
         //Initialize Buttons
         LoginButton = findViewById(R.id.LoginButton);
         SignupButton = findViewById(R.id.SignupButton);
-
+        EnterServerDetailsButton = findViewById(R.id.toEnterServerDetails);
 
         //Set Up Listener
         LoginButton.setOnClickListener(this);
         SignupButton.setOnClickListener(this);
+        EnterServerDetailsButton.setOnClickListener(this);
 
         //old code
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.landing), (v, insets) -> {
@@ -62,6 +65,10 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(new Intent(LandingActivity.this, SignupActivity.class));
         }
 
-
+        else if (id == R.id.toEnterServerDetails) {
+            var toServerDetails = new Intent(this, ServerDetailsActivity.class);
+            toServerDetails.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(toServerDetails);
+        }
     }
 }
