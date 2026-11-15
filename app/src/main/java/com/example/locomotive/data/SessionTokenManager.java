@@ -1,9 +1,7 @@
-package com.example.locomotive.grpc;
+package com.example.locomotive.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import java.util.Optional;
 
 // Manages the logged-in user's session token. Shouldn't need to be used outside
 // LoginActivity and ManagedChannelGetter.
@@ -25,6 +23,10 @@ public class SessionTokenManager {
 
     public static String getSessionToken() {
         return preferences.getString(sessionTokenKey, null);
+    }
+
+    public static boolean hasSessionToken() {
+        return getSessionToken() != null;
     }
 
     public static void clear() {

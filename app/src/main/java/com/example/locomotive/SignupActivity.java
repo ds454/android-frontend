@@ -1,18 +1,21 @@
 package com.example.locomotive;
 
-import io.grpc.ManagedChannel;
-import io.grpc.okhttp.OkHttpChannelBuilder;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.example.locomotive.grpc.LocomotiveManagedChannel;
+import com.example.locomotive.util.IntentFlags;
+
+import java.util.Optional;
+
+import ds454.locomotive.generated.grpc.AddUserRequest;
 
 /*
     Sign Up Activity:
@@ -45,7 +48,12 @@ import androidx.core.view.WindowInsetsCompat;
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
     //Declare Buttons
-    private Button LoginButton;
+    private Button SignupButton;
+    private EditText username;
+    private EditText password;
+    private EditText steamId;
+
+    private ds454.locomotive.generated.grpc.AddUserServiceGrpc.AddUserServiceBlockingStub addUserService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,21 +61,85 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_signup);
 
+        // Init the stub
+        addUserService = ds454.locomotive.generated.grpc.AddUserServiceGrpc.newBlockingStub(LocomotiveManagedChannel.get());
+
         //Initialize Buttons
-        LoginButton = findViewById(R.id.LoginButton);
+        SignupButton = findViewById(R.id.signupButton);
+        username = findViewById(R.id.UsernameTextEntry);
+        password = findViewById(R.id.PasswordTextEntry);
+        steamId = findViewById(R.id.SteamTextEntry);
 
         //Set up listener
-        LoginButton.setOnClickListener(this);
+        SignupButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        //grab id of clicked button
+        // grab id of clicked button
         int id = v.getId();
 
-        //If sign up, go to sign up page
-        if (id == R.id.LoginButton){
+        // If sign up, go to the login up page
+        if (id == R.id.signupButton){
+            clearAllErrors();
+
+            var provUsername = username.getText().toString();
+            var provPassword = password.getText().toString();
+            var provSteamId = steamId.getText().toString();
+
+            var signupProblem = signUp(provUsername, provPassword, provSteamId);
+            // Signed up without no problem
+            if (signupProblem.isEmpty()) {
+                startActivity(new Intent(SignupActivity.this, LoginActivity.class).setFlags(IntentFlags.ClearStack));
+                return;
+            }
+
+            var problem = signupProblem.get();
+            var message = problem.getMessage();
+
+            // There was a problem signing up
+            switch (problem.getField()) {
+                case "username":
+                    username.setError(message);
+                    break;
+
+                case "password":
+                    password.setError(message);
+                    break;
+
+                case "steamAccountId":
+                    steamId.setError(message);
+                    break;
+
+                default:
+                    Toast.makeText(this, signupProblem.get().getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+        if (id == R.id.LoginButton) {
             startActivity(new Intent(SignupActivity.this , LoginActivity.class));
         }
+    }
+
+    private Optional<ds454.locomotive.generated.grpc.problem.Problem> signUp(String username, String password, String steamId) {
+
+        var registerUserRequest = AddUserRequest
+                .newBuilder()
+                .setUsername(username)
+                .setPassword(password)
+                .setSteamAccountId(steamId)
+                .build();
+
+        var response = addUserService.addUser(registerUserRequest);
+        if (response.hasProblem()) {
+            return Optional.of(response.getProblem());
+        }
+
+        return Optional.empty();
+    }
+
+    private void clearAllErrors() {
+        username.setError(null);
+        password.setError(null);
+        steamId.setError(null);
     }
 }

@@ -9,13 +9,15 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.locomotive.LandingActivity;
-import com.example.locomotive.LoginActivity;
+import com.example.locomotive.Locomotive;
 import com.example.locomotive.R;
-import com.example.locomotive.grpc.ServerDetailsManager;
+import com.example.locomotive.data.ServerDetailsManager;
+import com.example.locomotive.grpc.LocomotiveManagedChannel;
 import com.example.locomotive.util.valid.PortChecker;
 
 public class ServerDetailsActivity extends AppCompatActivity {
@@ -111,6 +113,12 @@ public class ServerDetailsActivity extends AppCompatActivity {
             ServerDetailsManager.setServerMethod(method);
             ServerDetailsManager.setHostname(serverHost);
             ServerDetailsManager.setPort(serverPort);
+
+            // Init the managed channel
+            if (!LocomotiveManagedChannel.makeNewChannel(ServerDetailsManager.getServerDetails())) {
+                Toast.makeText(this, "Unable to connect to backend", Toast.LENGTH_LONG).show();
+                return;
+            }
 
             var toLanding = new Intent(ServerDetailsActivity.this, LandingActivity.class);
             toLanding.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

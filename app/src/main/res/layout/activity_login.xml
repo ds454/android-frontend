@@ -11,7 +11,7 @@
     <!-- Login Buttons -->
 
     <Button
-        android:id="@+id/EnterButton"
+        android:id="@+id/loginButton"
         android:layout_width="135dp"
         android:layout_height="56dp"
         android:layout_gravity="center"

@@ -1,8 +1,6 @@
 package com.example.locomotive;
 
 import ds454.locomotive.generated.grpc.problem.Problem;
-import ds454.locomotive.generated.grpc.problem.ProblemType;
-import io.grpc.ManagedChannel;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.locomotive.grpc.ManagedChannelGetter;
-import com.example.locomotive.grpc.SessionTokenManager;
+import com.example.locomotive.grpc.LocomotiveManagedChannel;
+import com.example.locomotive.data.SessionTokenManager;
 import com.example.locomotive.util.Result;
 
 import ds454.locomotive.generated.grpc.LoginRequest;
@@ -55,7 +52,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // Declare Buttons
     private Button SignupButton;
 
-    private ManagedChannel c;
     private AuthGrpc.AuthBlockingStub auth;
     private EditText UsernameTextEntry;
     private EditText PasswordTextEntry;
@@ -66,8 +62,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
 
         // Get the managed channel
-        c = ManagedChannelGetter.get();
-        auth = AuthGrpc.newBlockingStub(c);
+        auth = AuthGrpc.newBlockingStub(LocomotiveManagedChannel.get());
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
@@ -78,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         UsernameTextEntry = findViewById(R.id.UsernameTextEntry);
         PasswordTextEntry = findViewById(R.id.PasswordTextEntry);
 
-        LoginButton = findViewById(R.id.EnterButton);
+        LoginButton = findViewById(R.id.loginButton);
 
         //Set up listener
         SignupButton.setOnClickListener(this);
@@ -97,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivity(new Intent(LoginActivity.this , SignupActivity.class));
         }
 
-        if (id == R.id.EnterButton) {
+        if (id == R.id.loginButton) {
             // Call our login helper function
             var result = login(
                     UsernameTextEntry.getText().toString(),
@@ -116,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     case ServerError:
                     default:
-                        UsernameTextEntry.setError("Server Error. Try again later.");
+                        UsernameTextEntry.setError(result.getFailure().getMessage());
                 }
             }
             // If the call succeeded:
@@ -149,15 +144,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .build();
 
         // Here is the request. No building HTTP requests, no HTTP helper methods, no
-        // loading username and password from storage for each request. It just works!
-        ds454.locomotive.generated.grpc.LoginResponse response;
-        try {
-            response = auth.login(request);
-        }
-        catch (Exception e) {
-            Toast.makeText(this.getApplicationContext(), "Unable to connect to Locomotive server", Toast.LENGTH_LONG).show();
-            return Result.failure(ds454.locomotive.generated.grpc.problem.Problem.newBuilder().setProblem(ProblemType.ServerError).setMessage("Unable to connect to Locomotive server").build());
-        }
+        // loading username and password from storage for each request, no try catch around
+        // each request.
+        var response = auth.login(request);
+
 
         // If it has the session token, we return success
         if (response.hasSessionToken()) {

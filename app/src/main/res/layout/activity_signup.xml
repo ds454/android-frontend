@@ -31,7 +31,7 @@
     <!-- Sign Up Text Entries -->
 
     <Button
-        android:id="@+id/EnterButton"
+        android:id="@+id/signupButton"
         android:layout_width="135dp"
         android:layout_height="56dp"
         android:layout_gravity="center"
@@ -52,6 +52,7 @@
         android:layout_height="50dp"
         android:background="#A2ADCE"
         android:gravity="center"
+        android:hint="Username"
         android:textColor="#14142B"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -67,6 +68,7 @@
         android:layout_height="50dp"
         android:background="#A2ADCE"
         android:gravity="center"
+        android:hint="Password"
         android:textColor="#14142B"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -82,6 +84,7 @@
         android:layout_height="50dp"
         android:background="#A2ADCE"
         android:gravity="center"
+        android:hint="Steam ID"
         android:textColor="#14142B"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"

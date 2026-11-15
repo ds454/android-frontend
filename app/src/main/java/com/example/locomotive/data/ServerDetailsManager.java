@@ -1,4 +1,4 @@
-package com.example.locomotive.grpc;
+package com.example.locomotive.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -58,7 +58,7 @@ public class ServerDetailsManager {
         return Optional.of(prefHostname);
     }
 
-    public static void setPort(@NonNull int port) {
+    public static void setPort(int port) {
         serverDetails.edit().putInt(serverPortKey, port).apply();
     }
 
@@ -70,5 +70,33 @@ public class ServerDetailsManager {
 
     public static boolean serverDetailsAreSet() {
         return getPort().isPresent() && getHostname().isPresent() && getServerMethod().isPresent();
+    }
+
+    public static ServerDetails getServerDetails() {
+        var methodOptional = getServerMethod();
+        var hostOptional = getHostname();
+        var portOptional = getPort();
+
+        var methodIsPresent = methodOptional.isPresent();
+        var hostIsPresent = hostOptional.isPresent();
+        var portIsPresent = portOptional.isPresent();
+        if (!methodIsPresent || !hostIsPresent || !portIsPresent) throw new IllegalStateException();
+
+        return new ServerDetails(
+                methodOptional.get(),
+                hostOptional.get(),
+                portOptional.get());
+    }
+
+    public static final class ServerDetails {
+        public final ServerMethod method;
+        public final String host;
+        public final int port;
+
+        public ServerDetails(ServerMethod method, String host, int port) {
+            this.method = method;
+            this.host = host;
+            this.port = port;
+        }
     }
 }
