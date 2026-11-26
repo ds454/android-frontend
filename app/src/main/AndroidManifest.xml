@@ -38,6 +38,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".activities.AuthActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".LandingActivity"
             android:exported="true">
             <intent-filter>

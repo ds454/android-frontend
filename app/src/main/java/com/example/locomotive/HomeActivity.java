@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.example.locomotive.activities.AuthActivity;
 import com.google.android.material.navigation.NavigationView;
 
 /*
@@ -76,7 +78,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
             }
             else if (picked == R.id.dropDownAuth) {
-
+                startActivity(new Intent(HomeActivity.this, AuthActivity.class));
             }
 
             //close drawer
