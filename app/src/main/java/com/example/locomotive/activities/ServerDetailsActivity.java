@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.locomotive.LandingActivity;
-import com.example.locomotive.Locomotive;
 import com.example.locomotive.R;
 import com.example.locomotive.data.ServerDetailsManager;
 import com.example.locomotive.grpc.LocomotiveManagedChannel;
@@ -64,7 +63,12 @@ public class ServerDetailsActivity extends AppCompatActivity {
                 if (host.isEmpty()) {
                     serverHostInput.setError("Server hostname required");
                     serverHost = null;
-                } else {
+                }
+                else if (host.startsWith("http://") || host.startsWith("https://")) {
+                    serverHostInput.setError("Do not put the server method before the hostname");
+                    serverHost = null;
+                }
+                else {
                     serverHostInput.setError(null);
                     serverHost = host;
                 }

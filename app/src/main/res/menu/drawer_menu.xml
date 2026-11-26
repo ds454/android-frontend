@@ -3,6 +3,9 @@
 
     <!-- items/buttons in the drop down -->
     <item
+        android:id="@+id/dropDownFriends"
+        android:title="Friends" />
+    <item
         android:id="@+id/dropDownHome"
         android:title="Home" />
 
@@ -15,7 +18,7 @@
         android:title="Competitions" />
 
     <item
-        android:id="@+id/dropDownFriends"
-        android:title="Friends" />
+        android:id="@+id/dropDownAuth"
+        android:title="Auth" />
 
 </menu>

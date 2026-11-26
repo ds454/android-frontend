@@ -33,7 +33,7 @@ public class SessionTokenInterceptor implements ClientInterceptor {
                 String token = sessionTokenSupplier.get();
 
                 // Only add the session token to the request it if the token exists.
-                // Should only be for logging in and signing up.
+                // Should only be missing for logging in, signing up, and pinging the backend.
                 if (token != null && !token.isEmpty()) {
                     headers.put(sessionTokenHeader, token);
                 }

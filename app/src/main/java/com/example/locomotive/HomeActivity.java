@@ -5,13 +5,9 @@ import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -68,7 +64,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             int picked = item.getItemId();
 
             if (picked == R.id.dropDownHome){
-                startActivity(new Intent(HomeActivity.this, HomeActivity.class));
+                // Infinite loop
+//                startActivity(new Intent(HomeActivity.this, HomeActivity.class));
             }
             else if (picked == R.id.dropDownComps){
                 startActivity(new Intent(HomeActivity.this, CompsActivity.class));
@@ -77,6 +74,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(HomeActivity.this, FriendsActivity.class));
             } else if (picked == R.id.dropDownProfile){
                 startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+            }
+            else if (picked == R.id.dropDownAuth) {
+
             }
 
             //close drawer

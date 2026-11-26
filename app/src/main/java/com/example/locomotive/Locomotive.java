@@ -10,6 +10,7 @@ import com.example.locomotive.activities.ServerDetailsActivity;
 import com.example.locomotive.grpc.LocomotiveManagedChannel;
 import com.example.locomotive.data.ServerDetailsManager;
 import com.example.locomotive.data.SessionTokenManager;
+import com.example.locomotive.util.IntentFlags;
 
 public class Locomotive extends Application {
 
@@ -59,7 +60,7 @@ public class Locomotive extends Application {
 
     private void redirectTo(Class<? extends AppCompatActivity> clazz) {
         var intent = new Intent(Locomotive.this, clazz);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(IntentFlags.ClearStack);
         startActivity(intent);
     }
 

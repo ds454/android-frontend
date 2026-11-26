@@ -1,6 +1,5 @@
 package com.example.locomotive.grpc;
 
-import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.locomotive.Locomotive;
@@ -8,6 +7,7 @@ import com.example.locomotive.LoginActivity;
 import com.example.locomotive.activities.ServerDetailsActivity;
 import com.example.locomotive.data.ServerDetailsManager;
 import com.example.locomotive.data.SessionTokenManager;
+import com.example.locomotive.util.IntentFlags;
 
 import java.util.EnumSet;
 
@@ -18,8 +18,6 @@ import io.grpc.Status;
 public class LocomotiveManagedChannel {
 
     private static ManagedChannel channel = null;
-
-    private static final int newTaskFlags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK;
 
     public static boolean makeNewChannel(ServerDetailsManager.ServerDetails details) {
         return makeNewChannel(details.host, details.port, details.method == ServerDetailsManager.ServerMethod.HTTPS);
@@ -49,22 +47,22 @@ public class LocomotiveManagedChannel {
         var builder = ManagedChannelBuilder
                 // Host and port of the backend
                 .forAddress(host, port)
-                // Add the session token to each request
+                // Add the session token to each outgoing request
                 .intercept(new SessionTokenInterceptor(SessionTokenManager::getSessionToken))
-                // Redirect to LoginActivity if we're unauthenticated
+                // Redirect to LoginActivity if we're ever unauthenticated
                 .intercept(new RedirectOnCode(
                         EnumSet.of(Status.Code.UNAUTHENTICATED),
                         LoginActivity.class,
-                        newTaskFlags,
+                        IntentFlags.ClearStack,
                         grpcStatus -> Toast.makeText(
                                 Locomotive.getContext(),
                                 "Please login again",
                                 Toast.LENGTH_LONG).show()))
-                // Redirect to ServerDetailsActivity if there was a problem connecting to the backend
+                // Redirect to ServerDetailsActivity if there is ever a problem connecting to the backend
                 .intercept(new RedirectOnCode(
                         EnumSet.of(Status.Code.UNAVAILABLE, Status.Code.DEADLINE_EXCEEDED),
                         ServerDetailsActivity.class,
-                        newTaskFlags,
+                        IntentFlags.ClearStack,
                         grpcStatus -> Toast.makeText(
                                 Locomotive.getContext(),
                                 "Unable to connect to your Locomotive backend",
