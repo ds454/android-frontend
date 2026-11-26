@@ -14,12 +14,16 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.locomotive.R;
 import com.example.locomotive.adapter.AuthSessionAdapter;
+import com.example.locomotive.grpc.LocomotiveManagedChannel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,10 +32,14 @@ import java.util.List;
  */
 public class AuthFragment extends Fragment implements AuthSessionAdapter.AuthSessionLogoutHandler {
 
+    private final ds454.locomotive.generated.grpc.AuthGrpc.AuthBlockingStub stub = ds454.locomotive.generated.grpc.AuthGrpc.newBlockingStub(LocomotiveManagedChannel.get());
+
     private final List<Session> sessions = new ArrayList<>();
     private AuthSessionAdapter adapter;
 
     private final Handler main = new Handler(Looper.getMainLooper());
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
 
     public AuthFragment() {}
 
@@ -71,7 +79,54 @@ public class AuthFragment extends Fragment implements AuthSessionAdapter.AuthSes
     }
 
     @Override
-    public void handleLogout(Session session) {
+    public void onStart() {
+        super.onStart();
+        loadSessions();
+    }
 
+    @Override
+    public void handleLogout(Session session) {
+        executor.execute(() -> {
+            var response = stub.logoutSomewhere(ds454.locomotive.generated.grpc.LogoutSomewhereRequest.newBuilder().setSessionTokenId(session.getSessionTokenId()).build());
+            runOnUi(() -> {
+                if (response.hasProblem()) toast(response.getProblem().getMessage());
+                else adapter.removeSessionFromList(session);
+            });
+        });
+    }
+
+    private void loadSessions() {
+        executor.execute(() -> {
+            var sessions = getImmutableSessions();
+
+            runOnUi(() -> {
+                this.sessions.clear();
+                this.sessions.addAll(sessions);
+                adapter.notifyDataSetChanged();
+            });
+        });
+    }
+
+    private List<Session> getImmutableSessions() {
+        var response = stub.getActiveSessions(ds454.locomotive.generated.grpc.GetActiveSessionsRequest.getDefaultInstance());
+        return response.getSessions().getSessionsList();
+    }
+
+    private void runOnUi(Runnable action) {
+        main.post(() -> {
+            if (isAdded() && getView() != null) {
+                action.run();
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        executor.shutdownNow();
+    }
+
+    private void toast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
     }
 }
